@@ -33,11 +33,12 @@ resource "aws_instance" "main" {
   vpc_security_group_ids = [aws_security_group.main.id]
   subnet_id = var.subnet_ids[0]
   user_data = file("${path.module}/userdata.sh")
+  tags                   = merge(local.tags, { Name = local.name_prefix })
 }
 resource "aws_route53_record" "main" {
   zone_id = var.zone_id
-  name    = "www.example.com"
+  name    = "rabbitmq-${var.env}"
   type    = "A"
   ttl     = 30
-  records = [aws_instance.main.public_ip]
+  records = [aws_instance.main.private_ip]
 }
