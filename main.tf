@@ -31,13 +31,13 @@ resource "aws_instance" "main" {
   ami = var.ami
   instance_type = var.instance_type
   vpc_security_group_ids = [aws_security_group.main.id]
-  subnet_ids = var.subnet_ids[0]
+  subnet_id = var.subnet_ids[0]
   user_data = file("${path.module}/userdata.sh")
 }
-#resource "aws_route53_record" "main" {
-#  zone_id = var.zone_id
-#  name    = "www.example.com"
-#  type    = "A"
-#  ttl     = 30
-#  records = [aws_instance.main.public_ip]
-#}
+resource "aws_route53_record" "main" {
+  zone_id = var.zone_id
+  name    = "www.example.com"
+  type    = "A"
+  ttl     = 30
+  records = [aws_instance.main.public_ip]
+}
