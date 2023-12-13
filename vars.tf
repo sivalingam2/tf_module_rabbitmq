@@ -2,3 +2,8 @@ variable "tags" {}
 variable "env" {}
 variable "vpc_id" {}
 variable "sg_ingress_cidr" {}
+variable "ssh_ingress_cidr" {}
+variable "ami" {}
+variable "instance_type" {}
+variable "subnet_ids" {}
+variable "zone_id" {}

@@ -5,9 +5,16 @@ resource "aws_security_group" "main" {
   tags = merge(local.tags, {Name = "${local.name_prefix}-sg" })
 
   ingress {
-    description      = "DOCUDB"
-    from_port        = 27017
-    to_port          = 27017
+    description      = "SSH"
+    from_port        = 22
+    to_port          = 22
+    protocol         = "tcp"
+    cidr_blocks      = var.ssh_ingress_cidr
+  }
+  ingress {
+    description      = "rabbitmq"
+    from_port        = 5672
+    to_port          = 5672
     protocol         = "tcp"
     cidr_blocks      = var.sg_ingress_cidr
   }
@@ -19,5 +26,18 @@ resource "aws_security_group" "main" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
-
 }
+resource "aws_instance" "main" {
+  ami = var.ami
+  instance_type = var.instance_type
+  vpc_security_group_ids = [aws_security_group.main.id]
+  subnet_ids = var.subnet_ids[0]
+  user_data = file("${path.module}/userdata.sh")
+}
+#resource "aws_route53_record" "main" {
+#  zone_id = var.zone_id
+#  name    = "www.example.com"
+#  type    = "A"
+#  ttl     = 30
+#  records = [aws_instance.main.public_ip]
+#}
